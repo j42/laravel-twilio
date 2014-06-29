@@ -12,7 +12,7 @@ class LaravelTwilioServiceProvider extends ServiceProvider {
 	 *
 	 * @var bool
 	 */
-	protected $defer = true;
+	protected $defer = false;
 
 	/**
 	 * Bootstrap the application events.
@@ -20,7 +20,7 @@ class LaravelTwilioServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function boot() {
-		$this->package('j42/laravel-twilio', 'twilio');
+		$this->package('j42/laravel-twilio', 'twilio', __DIR__.'/../../config');
 	}
 
 	/**
@@ -30,11 +30,15 @@ class LaravelTwilioServiceProvider extends ServiceProvider {
 	 */
 	public function register() {
 
-		// Get pseudo-connection from config
-		$config = Config::get('twilio');
+		// Configure Namespace
+		Config::addNamespace('twilio', __DIR__.'/../../config');
+
+		// Get Config
+		$config = Config::get('twilio::config');
 
 		// Register Singleton
-		App::singleton('twilio', function() {
+		App::singleton('twilio', function($app) use ($config) {
+			// Get Twilio Config
 			return new TwilioClient($config);
 		});
 	}

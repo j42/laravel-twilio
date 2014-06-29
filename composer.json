@@ -11,21 +11,20 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/twilio/sdk"
+            "url": "https://github.com/twilio/twilio-php"
         }
     ],
     "require": {
         "php": ">=5.4.0",
         "illuminate/support": "4.2.*",
-        "guzzlehttp/guzzle": "~4.0",
-        "firebase/php-jwt": "@dev"
+        "twilio/sdk": "dev-master"
     },
     "autoload": {
         "classmap": [
-            "src/j42"
+            "src/J42"
         ],
         "psr-0": {
-            "J42\\LaravelTwilio": "src/j42"
+            "J42\\LaravelTwilio": "src/J42"
         }
     }
 }
