@@ -1,0 +1,31 @@
+{
+    "name": "j42/laravel-twilio",
+    "description": "A Twilio port for Laravel (4.2+)",
+    "authors": [
+        {
+            "name": "Julian Aceves",
+            "email": "j@j42.me",
+            "homepage": "https://j42.me"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/twilio/sdk"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.2.*",
+        "guzzlehttp/guzzle": "~4.0",
+        "firebase/php-jwt": "@dev"
+    },
+    "autoload": {
+        "classmap": [
+            "src/j42"
+        ],
+        "psr-0": {
+            "J42\\LaravelTwilio": "src/j42"
+        }
+    }
+}
