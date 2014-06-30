@@ -18,7 +18,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 		// Else New Request
 		$method = Input::get('method');
 		$phone  = preg_replace('/[^\d]+/', '', Input::get('phone'));
-		if (!Input::has('phone') || strlen($phone) < 10) return Response::json('Please supply a valid phone number.');
+		if (!Input::has('phone') || strlen($phone) < 10) return $this->respond('Please supply a valid phone number.', 500);
 
 		// Create Token
 		$token = $this->createToken($phone);
