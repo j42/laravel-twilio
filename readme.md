@@ -4,7 +4,7 @@ laravel-twilio
 A Twilio port for Laravel (4.2+)
 
 
-##Configuration
+## Install
 
 
 Add the package to your `composer.json` and run composer update:
@@ -27,7 +27,7 @@ Then add the service providers and facades to `config/app.php`
 ```
 
 
-## Configuration
+## Configure
 
 Generate the package config files by running `php artisan config:publish j42/laravel-twilio`, and adjust the relevant fields:
 
@@ -50,7 +50,7 @@ This package automatically installs the following routes (`GET` or `POST` allowe
 
 	/twilio/verify
 
-#### Request a Token
+### Request a Token
 
 Initiate an HTTP `GET` or `POST` request to `/twilio/verify` with the following parameters:
 
@@ -76,7 +76,7 @@ The numeric token is set in a cookie and has a 2 minute TTL during which it is v
 	*/
 ```
 
-#### Verify a Token
+### Verify a Token
 
 Initiate an HTTP `GET` or `POST` re	uest to `/twilio/verify/` with the following parameters:
 
@@ -101,7 +101,7 @@ If properly verified, the full object will be returned:
 ```
 
 
-#### Post-Verification (Success)
+### Post-Verification (Success)
 
 Once the code has been confirmed, the verified data is available via `Cookie` with a 5 minute TTL.  An HTTP request to `/twilio/verify` (with or without any parameters) will return:
 
@@ -179,5 +179,23 @@ Twilio::sms([
 	'to'		=> ['19999999999'],
 	// Text Message
 	'message'	=> 'Contents of the text message go here'
+]);
+```
+
+
+## Call
+
+How to interact with Twilio's REST-based SMS methods.
+
+####Initiate a Call (TWIML Endpoint)
+
+```php
+Twilio::call([
+	// From (optional -- if unsupplied, will be taken from default Config::get('twilio::config.from'))
+	'from'		=> '<your twilio #>'
+	// Array of recipients
+	'to'		=> ['19999999999'],
+	// Relative path to twiml document/endpoint (combined with Config::get('twilio::config.twiml') to form an absolute URL endpoint)
+	'twiml'		=> 'twilio/verify/twiml'
 ]);
 ```
