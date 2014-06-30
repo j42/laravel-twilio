@@ -30,7 +30,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 				return $this->sendSms($phone, $token);
 				break;
 
-			case 'phone':
+			case 'call':
 				return $this->respond('Temporarily disabled.', 500);
 				break;
 
