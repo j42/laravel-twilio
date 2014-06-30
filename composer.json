@@ -21,7 +21,8 @@
     },
     "autoload": {
         "classmap": [
-            "src/J42"
+            "src/J42",
+            "src/controllers"
         ],
         "psr-0": {
             "J42\\LaravelTwilio": "src/J42"
