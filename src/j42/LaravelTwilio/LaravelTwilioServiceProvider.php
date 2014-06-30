@@ -20,7 +20,7 @@ class LaravelTwilioServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function boot() {
-		$this->package('j42/laravel-twilio');
+		$this->package('j42/laravel-twilio', 'twilio');
 	}
 
 	/**
@@ -29,6 +29,9 @@ class LaravelTwilioServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function register() {
+
+		// Configure Local Config Namespace
+		Config::addNamespace('twilio', __DIR__.'/../../config');
 
 		// Register Singleton
 		App::singleton('twilio', function($app) {
