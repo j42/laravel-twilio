@@ -49,7 +49,7 @@ This package automatically installs the following routes (`GET` or `POST` allowe
 
 	/twilio/verify
 
-#### Get a Token
+#### Request a Token
 
 Initiate an HTTP `GET` or `POST` request to `/twilio/verify` with the following parameters:
 
@@ -62,7 +62,7 @@ The numeric token is set in a cookie and has a 2 minute TTL during which it is v
 
 ```php
 	// Get token (method can be either 'sms' or 'call')
-	file_get_contents('/twilio/verify?phone=<phone number>&method=sms');
+	file_get_contents('<yourdomain>/twilio/verify?phone=0000000000&method=sms');
 	
 	/* 
 		{
@@ -81,14 +81,31 @@ Initiate an HTTP `GET` or `POST` re	uest to `/twilio/verify/` with the following
 
 - `code` numeric code entered by user
 
+If properly verified, the full object will be returned:
+
+```php
+	// Verify token
+	file_get_contents('/twilio/verify?code=00000');
+	
+	/*
+		{
+			status: 'success',
+			data: {
+				code: '00000',			// Initial Generated Code
+				phone: '0000000000',	// User's phone
+				valid: true
+			}
+		}
+	*/
+```
+
 
 #### Post-Verification (Success)
 
-Once the code has been confirmed, the verified data is available via `Cookie` with a 5 minute TTL.  An HTTP request to `/twilio/verify` will return:
+Once the code has been confirmed, the verified data is available via `Cookie` with a 5 minute TTL.  An HTTP request to `/twilio/verify` (with or without any parameters) will return:
 
 ```php
-	// Get token (method can be either 'sms' or 'call')
-	file_get_contents('/twilio/verify?phone=<phone number>&method=sms');
+	file_get_contents('/twilio/verify');
 	
 	/*
 		{
@@ -107,7 +124,7 @@ Once the code has been confirmed, the verified data is available via `Cookie` wi
 
 Sometimes you may need to handle additional logic in a controller of your own.  By including a handy interface, this becomes easy:
 
-1. Define the route overrides (whichever suits your preference, or, both)
+**Define the route overrides (whichever suits your preference, or, both)**
 
 ```php
 	\Route::any('twilio/verify', [
@@ -119,7 +136,7 @@ Sometimes you may need to handle additional logic in a controller of your own.  
 	]);
 ```
 
-2. Create your controller, extending `J42\LaravelTwilio\TwilioVerify`
+**Create your controller, extending `J42\LaravelTwilio\TwilioVerify`**
 
 ```php
 	use J42\LaravelTwilio\TwilioVerify;
@@ -131,10 +148,11 @@ Sometimes you may need to handle additional logic in a controller of your own.  
 			
 			// Your pre-verification logic
 
-			// Wrap Parent Function
+			// Magic
 			$response = parent::verifyPhone();
 
 			// Your post-verification logic
+			// Cookie::get('twilio::phone') now available === json_decode($response)['data']
 
 			return $response;
 
@@ -143,7 +161,7 @@ Sometimes you may need to handle additional logic in a controller of your own.  
 	}
 ```
 
-3. Define your functionality as needed, making sure to call `parent::verifyPhone();` to handle the default events.  **If you need to access the cookie directly you may do so via: `Cookie::get('twilio::phone')`.**
+**Define your functionality as needed, making sure to call `parent::verifyPhone();` to handle the default events.  If you need to access the cookie directly you may do so via: `Cookie::get('twilio::phone')`.**
 
 
 ## SMS
