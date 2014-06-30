@@ -70,7 +70,7 @@ The numeric token is set in a cookie and has a 2 minute TTL during which it is v
 			status: 'success',
 			data: {
 				phone: '0000000000',	// User's phone
-				message: 'queued'		// Twilio response status
+				status: 'queued'		// Twilio response status
 			}
 		}
 	*/
