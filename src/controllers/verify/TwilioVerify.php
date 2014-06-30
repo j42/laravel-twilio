@@ -23,21 +23,18 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 		// Create Token
 		$token = $this->createToken($phone);
 
-		// Method
+		// Method Responder
 		switch (strtolower($method)) {
 
-			// Verify by Text
 			case 'sms':
 				return $this->sendSms($phone, $token);
 				break;
 
 			case 'phone':
-				// Respond
 				return $this->respond('Temporarily disabled.', 500);
 				break;
 
 			default:
-				// Respond
 				return $this->respond('Please choose a valid verification method.', 500);
 				break;
 
