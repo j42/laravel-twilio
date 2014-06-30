@@ -20,7 +20,7 @@ class LaravelTwilioServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function boot() {
-		$this->package('j42/laravel-twilio', 'twilio', __DIR__.'/../../config');
+		$this->package('j42/laravel-twilio');
 	}
 
 	/**
@@ -30,14 +30,14 @@ class LaravelTwilioServiceProvider extends ServiceProvider {
 	 */
 	public function register() {
 
-		// Configure Namespace
-		Config::addNamespace('twilio', __DIR__.'/../../config');
-
-		// Get Config
-		$config = Config::get('twilio::config');
-
 		// Register Singleton
-		App::singleton('twilio', function($app) use ($config) {
+		App::singleton('twilio', function($app) {
+			// Create Configuration
+			$config = [
+				'key'	=> Config::get('laravel-twilio::key'),
+				'token'	=> Config::get('laravel-twilio::token'),
+				'from'	=> Config::get('laravel-twilio::from')
+			];
 			// Get Twilio Config
 			return new TwilioClient($config);
 		});
