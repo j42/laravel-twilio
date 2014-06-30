@@ -34,9 +34,10 @@ Generate the package config files by running `php artisan config:publish j42/lar
 ```php
 	return [
 
-		'key'	=> 'YOURAPIKEY',			// Public key
-		'token'	=> 'YOURSECRETTOKEN',		// Private key
-		'from'	=> '9999999999'				// Default From Address 
+		'key'	=> 'YOURAPIKEY',						// Public key
+		'token'	=> 'YOURSECRETTOKEN',					// Private key
+		'from'	=> '9999999999',						// Default From Address 
+		'twiml'	=> 'https://yourdomain.com/base_path'	// TWIML Hosted Base Path
 
 	];
 ```
@@ -128,11 +129,11 @@ Sometimes you may need to handle additional logic in a controller of your own.  
 
 ```php
 	\Route::any('twilio/verify', [
-		'uses'	=> 'YourController@verifyPhone'
+		'uses'	=> 'YourController@verify'
 	]);
 
 	\Route::any('api/twilio/verify', [
-		'uses'	=> 'YourController@verifyPhone'
+		'uses'	=> 'YourController@verify'
 	]);
 ```
 
@@ -144,12 +145,12 @@ Sometimes you may need to handle additional logic in a controller of your own.  
 	class TwilioController extends TwilioVerify {
 
 		// Verify Phone
-		public function verifyPhone() {
+		public function verify() {
 			
 			// Your pre-verification logic
 
 			// Magic
-			$response = parent::verifyPhone();
+			$response = parent::verify();
 
 			// Your post-verification logic
 			// Cookie::get('twilio::phone') now available === json_decode($response)['data']
@@ -161,7 +162,7 @@ Sometimes you may need to handle additional logic in a controller of your own.  
 	}
 ```
 
-**Define your functionality as needed, making sure to call `parent::verifyPhone();` to handle the default events.  If you need to access the cookie directly you may do so via: `Cookie::get('twilio::phone')`.**
+**Define your functionality as needed, making sure to call `parent::verify();` to handle the default events.  If you need to access the cookie directly you may do so via: `Cookie::get('twilio::phone')`.**
 
 
 ## SMS

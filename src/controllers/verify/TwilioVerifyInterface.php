@@ -3,6 +3,7 @@
 interface TwilioVerifyInterface {
 
 	// Single Router
-	public function verifyPhone();
+	public function verify();
+	public function twiml();
 
 }
