@@ -198,11 +198,12 @@ How to interact with Twilio's REST-based call initiation methods.
 
 ```php
 Twilio::call([
-	// From (optional -- if unsupplied, will be taken from default Config::get('twilio::config.from'))
+	// From (optional -- if unsupplied, will be taken from default Config::get('laravel-twilio::from'))
 	'from'		=> '<your twilio #>'
 	// Array of recipients
 	'to'		=> ['19999999999'],
-	// Relative path to twiml document/endpoint (combined with Config::get('twilio::config.twiml') to form an absolute URL endpoint)
+	// Relative path to twiml document/endpoint (combined with Config::get('laravel-twilio::twiml') to form an absolute URL endpoint)
+	// You could also specify an abslute URL (http:// or https:// which would not be modified)
 	'twiml'		=> 'twilio/verify/twiml'
 ]);
 

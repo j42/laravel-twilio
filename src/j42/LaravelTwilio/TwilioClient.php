@@ -76,7 +76,7 @@ class TwilioClient {
 		// Message Loop
 		foreach ($this->to as $number) {
 			// Send Via Client
-			$this->response[$number] = $this->twilio->account->calls->create($this->from, $number, $options['twiml']);
+			$this->response[$number] = $this->twilio->account->calls->create($this->from, $number, $this->toAbsoluteUrl($options['twiml']));
 		}
 
 		// Callback Attempt
@@ -134,5 +134,13 @@ class TwilioClient {
 	private function createClient(Array $config) {
 		return new \Services_Twilio($config['key'], $config['token']);
 	}
+
+	// Return: (string) Absolute Path URL
+	// Args: (string) URL
+	private function toAbsoluteUrl($path) {
+		$isUrl = (preg_match('/^https?\:\/\//', $path));
+		return ($isUrl) ? $path : Config::get('laravel-twilio::twiml').ltrim($path, ' /');
+	}
+
 
 }
