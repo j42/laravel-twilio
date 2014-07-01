@@ -136,7 +136,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 			'token'		=> $token,
 			'phone'		=> [
 				'code'	=> $token,
-				'phone'	=> $phone,
+				'number'=> $phone,
 				'valid'	=> false
 		   ]
 		];

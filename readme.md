@@ -100,7 +100,7 @@ If properly verified, the full object will be returned:
 			status: 'success',
 			data: {
 				code: '00000',			// Initial Generated Code
-				phone: '0000000000',	// User's phone
+				number: '0000000000',	// User's phone
 				valid: true
 			}
 		}
@@ -120,7 +120,7 @@ Once the code has been confirmed, the verified data is available via `Cookie` wi
 			status: 'success',
 			data: {
 				code: '00000',			// Initial Generated Code
-				phone: '0000000000',	// User's phone
+				number: '0000000000',	// User's phone
 				valid: true
 			}
 		}
