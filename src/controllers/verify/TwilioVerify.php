@@ -28,7 +28,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 		$token = $this->createToken($phone);
 
 		// Populate Message
-		$message = (is_string($message)) ? str_ireplace('{code}', $token['token'], $message);
+		$message = (is_string($message)) ? str_ireplace('{code}', $token['token'], $message) : null;
 
 		// Method Responder
 		switch (strtolower($method)) {
