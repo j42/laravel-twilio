@@ -282,4 +282,32 @@ Twilio::buyNumber([
 	'4152222222'
 ]);									// Or an array
 
+// Including a configuration is recommended, but optional
+Twilio::buyNumber([
+	'4151111111',
+	'4152222222'
+], [
+	'VoiceUrl'		=> 'myendpoint',
+	'SmsUrl'		=> 'mysmsendpoint',
+	'VoiceMethod'	=> 'GET'
+]);
+
 ```
+
+
+## Associating #s with TWIML (VoiceUrl/SmsUrl)
+
+You can work with number resources by assigning them to TWIML endpoints for various services (voice, sms), as well as integrate and remove other features.  This is as simple as calling `update` with a number resource (an array of numbers, which include `sid` properties -- this includes all responses returned from this library).
+
+You can learn more about the "incoming phone numbers" resource via the [Twilio Docs](https://www.twilio.com/docs/api/rest/incoming-phone-numbers)
+
+```php
+
+// Associate a # with a new TWIML endpoint
+
+Twilio::update(Twilio::buyNumber('4151111111'), [
+	'VoiceUrl'	=> '<new twiml endpoint>'
+]);
+
+```
+

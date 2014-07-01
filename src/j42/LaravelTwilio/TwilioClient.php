@@ -105,16 +105,31 @@ class TwilioClient {
 
 
 	// Return: (Array) responses, indexed by phone #
-	// Args:: (Array || string) $number
-	public function buyNumber($number) {
+	// Args: (Array || string) $number, (Array) $config
+	public function buyNumber($number, Array $config = null) {
 		$number 	= (is_array($number)) ? $number : [$number];
+		$config 	= (is_array($config)) ? $config : [];
 		$responses 	= [];
 		foreach ($number as $n) {
 			$responses[$n] = $this->twilio->account->incoming_phone_numbers->create([
 				'PhoneNumber'	=> $n
-			]);
+			] + $config);
 		}
 		return $responses;
+	}
+
+
+	// Return: (Array) numbers
+	// Args: (Array) numbers, (Array) resource configuration
+	public function update(Array $numbers, Array $config) {
+		foreach ($numbers as $n) {
+			$sid = (is_object($n) && !empty($n->sid)) ? $n->sid : false;
+			$sid = ($sid) ? $sid : (is_array($n) && !empty($n['sid']) ? $n['sid'] : false); 
+			if ($sid) {
+				$Number = $this->twilio->account->incoming_phone_numbers->get($sid);
+				$Number->update($config);
+			}
+		}
 	}
 
 
