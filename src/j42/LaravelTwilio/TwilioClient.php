@@ -89,6 +89,14 @@ class TwilioClient {
 	}
 
 
+	// Return: (Array) list of numbers (->phone_number)
+	// Args: (Array) $options
+	public function availableNear(Array $options) {
+		$found = $this->twilio->account->available_phone_numbers->getList('US', 'Local', $options);
+		return $numbers->available_phone_numbers;
+	}
+
+
 	// Return: (obj) $this
 	// Args: (Array || string) $to
 	public function setTo($to) {

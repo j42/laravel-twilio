@@ -198,4 +198,7 @@ Twilio::call([
 	// Relative path to twiml document/endpoint (combined with Config::get('twilio::config.twiml') to form an absolute URL endpoint)
 	'twiml'		=> 'twilio/verify/twiml'
 ]);
+
+// Response Statuses:
+// QUEUED, RINGING, IN-PROGRESS, COMPLETED, FAILED, BUSY or NO_ANSWER.
 ```
