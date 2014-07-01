@@ -192,7 +192,7 @@ Twilio::sms([
 
 ## Call
 
-How to interact with Twilio's REST-based SMS methods.
+How to interact with Twilio's REST-based call initiation methods.
 
 ####Initiate a Call (TWIML Endpoint)
 
