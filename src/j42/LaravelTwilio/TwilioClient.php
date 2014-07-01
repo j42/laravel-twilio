@@ -57,7 +57,7 @@ class TwilioClient {
 	}
 
 
-	// Return: (Array) response, indexed by phone #
+	// Return: (Array) responses, indexed by phone #
 	// Args: (Array) $options, (callable) $callback
 	public function call(Array $options, callable $callback = null) {
 
@@ -91,11 +91,30 @@ class TwilioClient {
 
 	// Return: (Array) list of numbers (->phone_number)
 	// Args: (Array) $options
-	public function numbersNear(Array $options, Array $features = null) {
+	public function numbersNear(Array $options, Array $features = null, $buy = false) {
 		$features = (is_array($features)) ? $features : Config::get('laravel-twilio::features');
 		$features = (is_array($features)) ? $features : [];
 		$found = $this->twilio->account->available_phone_numbers->getList('US', 'Local', $options + $features);
-		return $numbers->available_phone_numbers;
+		// Purchase {n} numbers?
+		if ($buy && $buy > 0) {
+			return $this->buyNumber(array_chunk($found->available_phone_numbers, intval($buy)));
+		}
+		// Return available phone numbers
+		return $found->available_phone_numbers;
+	}
+
+
+	// Return: (Array) responses, indexed by phone #
+	// Args:: (Array || string) $number
+	public function buyNumber($number) {
+		$number 	= (is_array($number)) ? $number : [$number];
+		$responses 	= [];
+		foreach ($number as $n) {
+			$responses[$n] = $this->twilio->account->incoming_phone_numbers->create([
+				'PhoneNumber'	=> $n
+			]);
+		}
+		return $responses;
 	}
 
 

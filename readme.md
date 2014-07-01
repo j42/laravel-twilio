@@ -219,11 +219,17 @@ Twilio::call([
 
 You can also request local numbers (to be used in the 'from' field) via any of the attributes available in the SDK client.  **Currently US only.  If you want to adapt this (feel free to fork it) you may do so easily by abstracting the geoList parameters to the configuration file.**
 
+`numbersNear` accepts 3 arguments:
+
+- `conditions` Array, of conditions, taken from Twilio docs
+- `features` Array, of features required (SmsEnabled, VoiceEnabled, MmsEnabled) or null (use default in config)
+- `buy` int, of #s to purchase automatically & provision with account
+
 
 ```php
 
-// Near Area Code (With MMS Capability)
-Twilio::numbersNear([ 'AreaCode' => '415' ], ['MmsEnabled' => true]);	// Second parameter is an optional array of features (SmsEnabled, VoiceEnabled, MmsEnabled)
+// Near Area Code (With MMS Capability) + Buy 2
+Twilio::numbersNear([ 'AreaCode' => '415' ], ['MmsEnabled' => true], 2);	
 
 // Near Another Phone #
 Twilio::numbersNear([ 
@@ -258,5 +264,22 @@ A pattern to match phone numbers on. Valid characters are '*' and [0-9a-zA-Z]. T
 
 Twilio::numbersNear([ 'Contains' => 'J42' ]);			// Matches String
 Twilio::numbersNear([ 'Contains' => '510555****' ]);	// Matches Pattern
+
+```
+
+
+## Purchasing Numbers
+
+Purchasing numbers is easy.  Just pass an array of phone #s you would like to buy to the `buyNumbers` method.
+
+```php
+
+// Purchase Phone Numbers
+
+Twilio::buyNumber('4151111111');	// Valid as a single request
+Twilio::buyNumber([
+	'4151111111',
+	'4152222222'
+]);									// Or an array
 
 ```
