@@ -157,10 +157,13 @@ Sometimes you may need to handle additional logic in a controller of your own.  
 			// Your pre-verification logic
 
 			// Magic
-			$response = parent::verify();
+			// You can include an optional message instead of the default, if you want.
+			// If you do this PLEASE make sure you include `{code}` somewhere so that the user sees the verification code
+			// Without this token present in a custom message, they won't receive their confirmation token.
+			$response = parent::verify($message);
 
 			// Your post-verification logic
-			// Cookie::get('twilio::phone') now available === json_decode($response)['data']
+			// $this->phone === Cookie::get('twilio::phone') === json_decode($response)['data']
 
 			return $response;
 
@@ -230,8 +233,8 @@ Twilio::numbersNear([
 
 // Near A City (any combination allowed)
 Twilio::numbersNear([ 
-	'InRegion'		=> 'CA',				// State/Region/Province Code
-	'InPostalCode'	=> '90017'				// Postal code?
+	'InRegion'		=> 'CA',		// State/Region/Province Code
+	'InPostalCode'	=> '90017'		// Postal code?
 ]);
 
 // Near Lat/Long Coordinates

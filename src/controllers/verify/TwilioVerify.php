@@ -9,8 +9,12 @@ use Illuminate\Support\Facades\Cookie;
 
 class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 
+	# Properties
+	public $phone;
+
+
 	// Main Router
-	public function verify() {
+	public function verify($message = null) {
 
 		// Verify Existing?
 		if ((Cookie::has('twilio::phone')) && $this->verified()) return $this->verified();
@@ -23,11 +27,14 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 		// Create Token
 		$token = $this->createToken($phone);
 
+		// Populate Message
+		$message = (is_string($message)) ? str_ireplace('{code}', $token['token'], $message);
+
 		// Method Responder
 		switch (strtolower($method)) {
 
 			case 'sms':
-				return $this->sendSms($phone, $token);
+				return $this->sendSms($phone, $token, $message);
 				break;
 
 			case 'call':
@@ -76,13 +83,18 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 	// Send SMS
 	// Returns: (json) JSEND-compliant response {success: ..., data: ...}
 	// Args: (string) $phone, (Array) $token
-	protected function sendSms($phone, Array $token) {
+	protected function sendSms($phone, Array $token, $message = null) {
 
 		// Response(s) Indexed by Recipient Phone #(s)
 		$responses = \Twilio::sms([
 			'to'		=> $phone,
-			'message'	=> "Please enter the following code".(Config::get('app.domain') ? ' on '.$this->getDomain() : '')." to complete the verification process:\n\n".$token['token']
+			'message'	=> (is_string($message)) ? $message : "Please enter the following code".(Config::get('app.domain') ? ' on '.$this->getDomain() : '')." to complete the verification process:\n\n".$token['token']
 		]);
+
+		// Update Model
+		if ($responses[$phone]->status === 'queued') {
+			$this->phone = Cookie::get('twilio::phone');
+		}
 
 		// Respond w/ 2 Minute TTL
 		return $this->respond([
@@ -101,6 +113,11 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 			'twiml'	=> Config::get('laravel-twilio::twiml').'/twilio/verify/twiml?code='.$token['token']
 		]);
 
+		// Update Model
+		if ($responses[$phone]->status === 'queued') {
+			$this->phone = Cookie::get('twilio::phone');
+		}
+
 		// Respond w/ 2 Minute TTL
 		return $this->respond([
 			'phone'		=> $phone,
@@ -114,15 +131,17 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 	// Args: (string) $phone
 	protected function createToken($phone) {
 		// Generate a Random Token w 2 Minute TTL
-		$token = ceil(mt_rand(10000,99999));
-		return [
+		$token  = ceil(mt_rand(10000,99999));
+		$cookie = [
 			'token'		=> $token,
-			'cookie'	=> Cookie::make('twilio::phone', [
-								'code'	=> $token,
-								'phone'	=> $phone,
-								'valid'	=> false
-						   ], 2)
+			'phone'		=> [
+				'code'	=> $token,
+				'phone'	=> $phone,
+				'valid'	=> false
+		   ]
 		];
+		$cookie['cookie'] = Cookie::make('twilio::phone', $cookie['phone'], 2);
+		return $cookie;
 	}
 
 	// Validate Token (TTL 5m)
@@ -139,6 +158,9 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 
 			// Validate.
 			$cookie['valid'] = true;
+
+			// Update Model
+			$this->phone = $cookie;
 
 			// Respond w/ Object for a 5 Minute TTL
 			return $this->respond($cookie, 200)->withCookie(Cookie::make('twilio::phone', $cookie, 5));
