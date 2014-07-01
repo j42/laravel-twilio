@@ -37,7 +37,14 @@ Generate the package config files by running `php artisan config:publish j42/lar
 		'key'	=> 'YOURAPIKEY',						// Public key
 		'token'	=> 'YOURSECRETTOKEN',					// Private key
 		'from'	=> '9999999999',						// Default From Address 
-		'twiml'	=> 'https://yourdomain.com/base_path'	// TWIML Hosted Base Path
+		'twiml'	=> 'https://yourdomain.com/base_path',	// TWIML Hosted Base Path
+
+		// Default Features When Requesting Numbers (override via `numbersNear` method)
+		'features'	=> [
+	    	'SmsEnabled'	=> true,
+	    	'VoiceEnabled'	=> false,
+	    	'MmsEnabled'	=> false,
+	    ]
 
 	];
 ```
@@ -201,4 +208,51 @@ Twilio::call([
 
 // Response Statuses:
 // QUEUED, RINGING, IN-PROGRESS, COMPLETED, FAILED, BUSY or NO_ANSWER.
+```
+
+
+## Request Local Numbers
+
+You can also request local numbers (to be used in the 'from' field) via any of the attributes available in the SDK client.  **Currently US only.  If you want to adapt this (feel free to fork it) you may do so easily by abstracting the geoList parameters to the configuration file.**
+
+
+```php
+
+// Near Area Code (With MMS Capability)
+Twilio::numbersNear([ 'AreaCode' => '415' ], ['MmsEnabled' => true]);	// Second parameter is an optional array of features (SmsEnabled, VoiceEnabled, MmsEnabled)
+
+// Near Another Phone #
+Twilio::numbersNear([ 
+	'NearNumber' => '415XXXXXX',	// Other Number
+	'Distance'	 => '50'			// Miles (optional, default: 25)
+]);
+
+// Near A City (any combination allowed)
+Twilio::numbersNear([ 
+	'InRegion'		=> 'CA',				// State/Region/Province Code
+	'InPostalCode'	=> '90017'				// Postal code?
+]);
+
+// Near Lat/Long Coordinates
+Twilio::numbersNear([
+	'NearLatLong'	=> '37.840699,-122.461853',
+	'Distance'		=> '50'
+]);
+
+// ... you get the idea.  Most fields can be mixed and matched arbitrarily, but if you are wondering, test it out for yourself!
+
+```
+
+##### By Regex
+
+A pattern to match phone numbers on. Valid characters are '*' and [0-9a-zA-Z]. The '*' character will match any single digit. See Example 2 and Example 3 below.
+
+```php
+
+// By Regex 
+// Valid characters are '*' and [0-9a-zA-Z]. The '*' character will match any single digit. 
+
+Twilio::numbersNear([ 'Contains' => 'J42' ]);			// Matches String
+Twilio::numbersNear([ 'Contains' => '510555****' ]);	// Matches Pattern
+
 ```

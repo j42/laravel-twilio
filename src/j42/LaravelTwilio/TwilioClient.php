@@ -91,8 +91,10 @@ class TwilioClient {
 
 	// Return: (Array) list of numbers (->phone_number)
 	// Args: (Array) $options
-	public function availableNear(Array $options) {
-		$found = $this->twilio->account->available_phone_numbers->getList('US', 'Local', $options);
+	public function numbersNear(Array $options, Array $features = null) {
+		$features = (is_array($features)) ? $features : Config::get('laravel-twilio::features');
+		$features = (is_array($features)) ? $features : [];
+		$found = $this->twilio->account->available_phone_numbers->getList('US', 'Local', $options + $features);
 		return $numbers->available_phone_numbers;
 	}
 
