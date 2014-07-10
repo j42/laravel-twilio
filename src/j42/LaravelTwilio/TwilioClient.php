@@ -90,14 +90,14 @@ class TwilioClient {
 
 
 	// Return: (Array) list of numbers (->phone_number)
-	// Args: (Array) $options
+	// Args: (Array) $options [search options], (Array) $features [number features & config], (int) # of numbers to acquire
 	public function numbersNear(Array $options, Array $features = null, $buy = false) {
 		$features = (is_array($features)) ? $features : Config::get('laravel-twilio::features');
 		$features = (is_array($features)) ? $features : [];
 		$found = $this->twilio->account->available_phone_numbers->getList('US', 'Local', $options + $features);
 		// Purchase {n} numbers?
 		if ($buy && $buy > 0) {
-			return $this->buyNumber(array_chunk($found->available_phone_numbers, intval($buy))[0]);
+			return $this->buyNumber(array_chunk($found->available_phone_numbers, intval($buy))[0], $features);
 		}
 		// Return available phone numbers
 		return $found->available_phone_numbers;
@@ -111,8 +111,9 @@ class TwilioClient {
 		$config 	= (is_array($config)) ? $config : [];
 		$responses 	= [];
 		foreach ($number as $n) {
-			$responses[$n] = $this->twilio->account->incoming_phone_numbers->create([
-				'PhoneNumber'	=> $n
+			$string = (is_string($n)) ? $n : $n->phone_number;
+			$responses[$string] = $this->twilio->account->incoming_phone_numbers->create([
+				'PhoneNumber'	=> $string
 			] + $config);
 		}
 		return $responses;
