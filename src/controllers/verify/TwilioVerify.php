@@ -150,20 +150,23 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 	protected function verified() {
 
 		// Valid Code || Submitted Proof?
-		$cookie = Cookie::get('twilio::phone');
+		$payload = Cookie::get('twilio::phone');
 
 		// Valid Request
-		if ($cookie['code'] == Input::get('code') ||
-			$cookie['valid'] === true) {
+		if ($payload['code'] == Input::get('code') ||
+			$payload['valid'] === true) {
 
 			// Validate.
-			$cookie['valid'] = true;
+			$payload['valid'] = true;
 
 			// Update Model
-			$this->phone = $cookie;
+			$this->phone = $payload;
+
+			// Fire "Phone Added" Event
+			\Event::fire('user.phoneVerified', $payload);
 
 			// Respond w/ Object for a 5 Minute TTL
-			return $this->respond($cookie, 200)->withCookie(Cookie::make('twilio::phone', $cookie, 5));
+			return $this->respond($payload, 200)->withCookie(Cookie::make('twilio::phone', $payload, 5));
 
 		} else return false;
 	}
