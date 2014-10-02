@@ -16,7 +16,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "twilio/sdk": "dev-master"
+        "twilio/sdk": "3.10.*"
     },
     "autoload": {
         "classmap": [
