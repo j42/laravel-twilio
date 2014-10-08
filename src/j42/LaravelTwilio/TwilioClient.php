@@ -110,10 +110,12 @@ class TwilioClient {
 		$number 	= (is_array($number)) ? $number : [$number];
 		$config 	= (is_array($config)) ? $config : [];
 		$responses 	= [];
+		\Log::info($number);
 		foreach ($number as $n) {
+			\Log::info($n);
 			$string = (is_string($n)) ? $n : $n->phone_number;
 			$responses[$string] = $this->twilio->account->incoming_phone_numbers->create([
-				'PhoneNumber'	=> $string
+				'PhoneNumber'	=> (string) $string
 			] + $config);
 		}
 		return $responses;
@@ -125,7 +127,7 @@ class TwilioClient {
 	public function update(Array $numbers, Array $config) {
 		foreach ($numbers as $n) {
 			$sid = (is_object($n) && !empty($n->sid)) ? $n->sid : false;
-			$sid = ($sid) ? $sid : (is_array($n) && !empty($n['sid']) ? $n['sid'] : false); 
+			$sid = ($sid) ? $sid : (is_array($n) && !empty($n['sid']) ? $n['sid'] : false);
 			if ($sid) {
 				$Number = $this->twilio->account->incoming_phone_numbers->get($sid);
 				$Number->update($config);
