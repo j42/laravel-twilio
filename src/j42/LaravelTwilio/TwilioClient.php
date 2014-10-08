@@ -113,7 +113,7 @@ class TwilioClient {
 		\Log::info($number);
 		foreach ($number as $n) {
 			\Log::info($n);
-			$string = (is_string($n)) ? $n : $n->phone_number;
+			$string = (is_string($n)) ? $n : (is_object($n) ? $n->phone_number : $n[0]->phone_number);
 			$responses[$string] = $this->twilio->account->incoming_phone_numbers->create([
 				'PhoneNumber'	=> (string) $string
 			] + $config);
