@@ -97,7 +97,6 @@ class TwilioClient {
 		$found = $this->twilio->account->available_phone_numbers->getList('US', 'Local', $options + $features);
 		// Purchase {n} numbers?
 		if ($buy && $buy > 0) {
-			\Log::info($found->available_phone_numbers); \Log::info(array_chunk($found->available_phone_numbers, intval($buy))[0]);
 			return $this->buyNumber(array_chunk($found->available_phone_numbers, intval($buy))[0], $features);
 		}
 		// Return available phone numbers
@@ -117,9 +116,6 @@ class TwilioClient {
 				'PhoneNumber'	=> (string) $string
 			] + $config);
 		}
-		\Log::info([
-				'PhoneNumber'	=> (string) $string
-			] + $config);
 		return $responses;
 	}
 
