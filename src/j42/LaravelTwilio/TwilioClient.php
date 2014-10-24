@@ -117,7 +117,9 @@ class TwilioClient {
 				'PhoneNumber'	=> (string) $string
 			] + $config);
 		}
-		\Log::info($responses);
+		\Log::info([
+				'PhoneNumber'	=> (string) $string
+			] + $config);
 		return $responses;
 	}
 
