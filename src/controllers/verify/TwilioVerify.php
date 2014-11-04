@@ -88,7 +88,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 		// Response(s) Indexed by Recipient Phone #(s)
 		$responses = \Twilio::sms([
 			'to'		=> $phone,
-			'message'	=> (is_string($message)) ? $message : "Please enter the following code".(Config::get('app.domain') ? ' on '.$this->getDomain() : '')." to complete the verification process:\n\n".$token['token']
+			'message'	=> (is_string($message)) ? $message : $token['token']."\n\nPlease enter this code".(Config::get('app.domain') ? ' on '.$this->getDomain() : '')." to complete the verification process."
 		]);
 
 		// Update Model
