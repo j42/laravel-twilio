@@ -116,14 +116,36 @@ class TwilioClient {
 		$config 	= (is_array($config)) ? $config : [];
 		$responses 	= [];
 		foreach ($number as $n) {
-			$string = (is_string($n)) ? $n : (is_object($n) ? $n->phone_number : $n[0]->phone_number);
-			$responses[$string] = $this->twilio->account->incoming_phone_numbers->create([
-				'PhoneNumber'	=> (string) $string
-			] + $config);
+
+			if ($n) {
+				$string = (is_string($n)) ? $n : (is_object($n) ? $n->phone_number : $n[0]->phone_number);
+				$responses[$string] = $this->twilio->account->incoming_phone_numbers->create([
+					'PhoneNumber'	=> (string) $string
+				] + $config);
+			}
+
 		}
 		return $responses;
 	}
 
+
+	// Return: (Array) responses
+	// Args: (Array || string) $numbers, (Array) $config
+	public function releaseNumber($number, Array $config = null) {
+		$number 	= (is_array($number)) ? $number : [$number];
+		$config 	= (is_array($config)) ? $config : [];
+		$responses 	= [];
+		foreach ($number as $n) {
+
+			if ($n) {
+				$string = (is_string($n)) ? $n : (is_object($n) ? $n->phone_number : $n[0]->phone_number);
+				$obj = $this->twilio->account->incoming_phone_numbers->getNumber((string) $string);
+				$responses[$string] = (!empty($obj->sid)) ? $this->twilio->account->incoming_phone_numbers->delete($obj->sid) : 'failed';
+			}
+
+		}
+		return $responses;
+	}
 
 	// Return: (Array) numbers
 	// Args: (Array) numbers, (Array) resource configuration
