@@ -44,7 +44,12 @@ class TwilioClient {
 		// Message Loop
 		foreach ($this->to as $number) {
 			// Send Via Client
-			$this->response[$number] = $this->twilio->account->messages->sendMessage($this->from, $number, $options['message']);
+			try {
+				$this->response[$number] = $this->twilio->account->messages->sendMessage($this->from, $number, $options['message']);
+			} catch (\Exception $e) {
+				$this->response[$number] = false;
+				\Log::error($e->getMessage());
+			}
 		}
 
 		// Callback Attempt
@@ -76,7 +81,12 @@ class TwilioClient {
 		// Message Loop
 		foreach ($this->to as $number) {
 			// Send Via Client
-			$this->response[$number] = $this->twilio->account->calls->create($this->from, $number, $this->toAbsoluteUrl($options['twiml']));
+			try {
+				$this->response[$number] = $this->twilio->account->calls->create($this->from, $number, $this->toAbsoluteUrl($options['twiml']));
+			} catch (\Exception $e) {
+				$this->response[$number] = false;
+				\Log::error($e->getMessage());
+			}
 		}
 
 		// Callback Attempt
@@ -92,36 +102,42 @@ class TwilioClient {
 	// Return: (Array) list of numbers (->phone_number)
 	// Args: (Array) $options [search options], (Array) $features [number features & config], (int) # of numbers to acquire
 	public function numbersNear(Array $options, Array $features = null, $buy = false) {
-		$features = (is_array($features)) ? $features : Config::get('laravel-twilio::features');
+		$features = (is_array($features)) ? $features : \Config::get('laravel-twilio::features');
 		$features = (is_array($features)) ? $features : [];
 		$found = $this->twilio->account->available_phone_numbers->getList('US', 'Local', $options + $features);
 		// Purchase {n} numbers?
-		if ($buy && $buy > 0) {
+		if ($buy && $buy > 0 && is_array($found->available_phone_numbers) && !empty($found->available_phone_numbers)) {
 			$purchase = array_chunk($found->available_phone_numbers, intval($buy));
 			if (!empty($purchase)) {
 				return $this->buyNumber($purchase[0], $features);
 			} else {
-				\Log::error($found->available_phone_numbers);
+				\Log::error('No available phone numbers', [$found->available_phone_numbers]);
 			}
 		}
 		// Return available phone numbers
-		return $found->available_phone_numbers;
+		return (is_array($found->available_phone_numbers)) ? $found->available_phone_numbers : [];
 	}
 
 
 	// Return: (Array) responses, indexed by phone #
 	// Args: (Array || string) $number, (Array) $config
-	public function buyNumber($number, Array $config = null) {
+	public function buyNumber($number, Array $config = null, $friendly = true) {
+		$friendly 	= ($friendly) ? 'friendly_name' : 'phone_number';
 		$number 	= (is_array($number)) ? $number : [$number];
 		$config 	= (is_array($config)) ? $config : [];
 		$responses 	= [];
 		foreach ($number as $n) {
 
 			if ($n) {
-				$string = (is_string($n)) ? $n : (is_object($n) ? $n->phone_number : $n[0]->phone_number);
-				$responses[$string] = $this->twilio->account->incoming_phone_numbers->create([
-					'PhoneNumber'	=> (string) $string
-				] + $config);
+				$string = (is_string($n)) ? $n : (is_object($n) ? $n->{$friendly} : $n[0]->{$friendly});
+				try {
+					$responses[$string] = $this->twilio->account->incoming_phone_numbers->create([
+						'PhoneNumber'	=> (string) $string
+					] + $config);
+				} catch (\Exception $e) {
+					$responses[$string] = false;
+					\Log::error('Error purchasing number.', [$n]);
+				}
 			}
 
 		}
@@ -139,8 +155,13 @@ class TwilioClient {
 
 			if ($n) {
 				$string = (is_string($n)) ? $n : (is_object($n) ? $n->phone_number : $n[0]->phone_number);
-				$obj = $this->twilio->account->incoming_phone_numbers->getNumber((string) $string);
-				$responses[$string] = (!empty($obj->sid)) ? $this->twilio->account->incoming_phone_numbers->delete($obj->sid) : 'failed';
+				try {
+					$obj = $this->twilio->account->incoming_phone_numbers->getNumber((string) $string);
+					$responses[$string] = (!empty($obj->sid)) ? $this->twilio->account->incoming_phone_numbers->delete($obj->sid) : 'failed';
+				} catch (\Exception $e) {
+					$responses[$string] = false;
+					\Log::error('Error releasing number.', [$n]);
+				}
 			}
 
 		}
@@ -201,7 +222,7 @@ class TwilioClient {
 	// Args: (string) URL
 	private function toAbsoluteUrl($path) {
 		$isUrl = (preg_match('/^https?\:\/\//', $path));
-		return ($isUrl) ? $path : Config::get('laravel-twilio::twiml').ltrim($path, ' /');
+		return ($isUrl) ? $path : \Config::get('laravel-twilio::twiml').ltrim($path, ' /');
 	}
 
 
