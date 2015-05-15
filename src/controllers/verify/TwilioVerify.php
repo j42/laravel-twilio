@@ -57,10 +57,10 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 	public function twiml() {
 		if (Input::has('code')) {
 			$response = new \Services_Twilio_Twiml();
-			$response->say('Please enter the following code on '.(Config::get('app.domain') ? ' on '.$this->getDomain() : '').'.');
-			$response->say(implode(' ', str_split(Input::get('code'))));
+			$response->say('Please enter the following code '.(Config::get('app.domain') ? ' on '.$this->getDomain() : '').'.');
+			$response->say(implode(', ', str_split(Input::get('code'))));
 			$response->say('Once again, your code is: ');
-			$response->say(implode(' ', str_split(Input::get('code'))));
+			$response->say(implode(', ', str_split(Input::get('code'))));
 			print $response;
 		} else return false;
 	}
