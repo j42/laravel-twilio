@@ -21,7 +21,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 
 		// Else New Request
 		$method = Input::get('method');
-		$phone  = preg_replace('/[^\d]+/', '', Input::get('phone'));
+        $phone  = preg_replace('/[^0^\+][^\d]+/', '', Input::get('phone'));
 		if (!Input::has('phone') || strlen($phone) < 10) return $this->respond('Please supply a valid phone number.', 500);
 
 		// Create Token
@@ -100,7 +100,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 		return $this->respond([
 			'phone'		=> $phone,
 			'status'	=> (isset($responses[$phone])) ? $responses[$phone]->status : null
-		], 200)->withCookie($token['cookie']);
+		], 200);
 	}
 
 	// Send Call
@@ -122,7 +122,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 		return $this->respond([
 			'phone'		=> $phone,
 			'status'	=> (isset($responses[$phone])) ? $responses[$phone]->status : null
-		], 200)->withCookie($token['cookie']);
+		], 200);
 
 	}
 
@@ -140,8 +140,9 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 				'valid'	=> false
 		   ]
 		];
-		$cookie['cookie'] = Cookie::make('twilio::phone', $cookie['phone'], 2);
-		return $cookie;
+        Cookie::queue('twilio::phone', $cookie['phone'], 2);
+
+        return $cookie;
 	}
 
 	// Validate Token (TTL 5m)
@@ -166,7 +167,8 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 			\Event::fire('user.phoneVerified', $payload);
 
 			// Respond w/ Object for a 5 Minute TTL
-			return $this->respond($payload, 200)->withCookie(Cookie::make('twilio::phone', $payload, 5));
+            Cookie::queue('twilio::phone', $payload, 5);
+			return $this->respond($payload, 200);
 
 		} else return false;
 	}
