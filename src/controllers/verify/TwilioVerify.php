@@ -136,7 +136,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
     // Args: (string) $phone
     protected function createToken($phone) {
         // Generate a Random Token w 2 Minute TTL
-        $token  = ceil(mt_rand(10000,99999));
+        $token  = ceil(mt_rand(10000,999999));
         $cookie = [
             'token'		=> $token,
             'phone'		=> [
