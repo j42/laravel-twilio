@@ -1,5 +1,5 @@
 {
-    "name": "j42/laravel-twilio",
+    "name": "elijan/laravel-twilio",
     "description": "A Twilio port for Laravel (4.2+)",
     "authors": [
         {
