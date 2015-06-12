@@ -21,11 +21,11 @@
     },
     "autoload": {
         "classmap": [
-            "src/j42",
+            "src/elijan",
             "src/controllers"
         ],
         "psr-0": {
-            "J42\\LaravelTwilio": "src/j42"
+            "J42\\LaravelTwilio": "src/elijan"
         }
     }
 }
