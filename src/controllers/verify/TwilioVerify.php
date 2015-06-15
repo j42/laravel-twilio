@@ -27,10 +27,11 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
         // Else New Request
         $method = Input::get('method');
         $phone  = preg_replace('/[^0^\+][^\d]+/', '', Input::get('phone'));
-        if (!Input::has('phone') || strlen($phone) < 10) return $this->respond('Please supply a valid phone number.', 500);
+        if (!Input::has('phone') || strlen($phone) < 12) return $this->respond(['message'=>'Please supply a valid phone number.'], 500);
 
         // Create Token
         $token = $this->createToken($phone);
+
 
         // Populate Message
         $message = (is_string($message)) ? str_ireplace('{code}', $token['token'], $message) : null;
@@ -47,7 +48,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
                 break;
 
             default:
-                return $this->respond('Please choose a valid verification method.', 500);
+                return $this->respond(['message'=>'Please choose a valid verification method.'], 500);
                 break;
 
         }
@@ -76,13 +77,15 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
     // Args: (mixed) $data, (int) status code
     protected function respond($data, $code = 200) {
 
+
         switch ($code) {
-            case 200: $status = 'success'; break;
-            case 500: $status = 'error'; break;
+            case 200: $data['status'] = 'success'; $data['error']  = false; break;
+            case 500: $data['status'] = 'error';$data['error']  = true; break;
         }
 
 
-        return Response::json(compact('status', 'data'));
+
+        return Response::json($data);
 
     }
 
@@ -94,7 +97,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
         // Response(s) Indexed by Recipient Phone #(s)
         $responses = \Twilio::sms([
             'to'		=> $phone,
-            'message'	=> (is_string($message)) ? $message : $token['token']."\n\nPlease enter this code".(Config::get('app.domain') ? ' on '.$this->getDomain() : '')." to complete the verification process."
+            'message'	=> (is_string($message)) ? $message : "\n\nPlease enter this code ".(Config::get('app.domain') ? ' on '.$this->getDomain() : $token['token'])." to complete the verification process."
         ]);
 
         // Update Model
