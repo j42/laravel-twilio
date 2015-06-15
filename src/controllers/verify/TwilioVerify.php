@@ -81,6 +81,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
             case 500: $status = 'error'; break;
         }
 
+
         return Response::json(compact('status', 'data'));
 
     }
@@ -97,15 +98,22 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
         ]);
 
         // Update Model
-        if ($responses[$phone]->status === 'queued') {
-            $this->phone = Cookie::get('twilio::phone');
+
+
+        if($responses[$phone]) {
+
+            if ($responses[$phone]->status === 'queued') {
+                $this->phone = Cookie::get('twilio::phone');
+            }
+
+            // Respond w/ 2 Minute TTL
+            return $this->respond([
+                'phone'		=> $phone,
+                'status'	=> (isset($responses[$phone])) ? $responses[$phone]->status : null
+            ], 200);
         }
 
-        // Respond w/ 2 Minute TTL
-        return $this->respond([
-            'phone'		=> $phone,
-            'status'	=> (isset($responses[$phone])) ? $responses[$phone]->status : null
-        ], 200);
+        return $this->respond($responses, 500);
     }
 
     // Send Call
