@@ -1,6 +1,7 @@
 {
-    "name": "j42/laravel-twilio",
+    "name": "elijan/laravel-twilio",
     "description": "A Twilio port for Laravel (4.2+)",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Julian Aceves",
@@ -24,7 +25,7 @@
             "src/controllers"
         ],
         "psr-0": {
-            "J42\\LaravelTwilio": "src/j42"
+            "J42\\LaravelTwilio":  "src/j42"
         }
     }
 }
