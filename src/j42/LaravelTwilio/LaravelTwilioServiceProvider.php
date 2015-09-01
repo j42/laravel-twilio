@@ -5,58 +5,78 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 
-class LaravelTwilioServiceProvider extends ServiceProvider {
+class LaravelTwilioServiceProvider extends ServiceProvider
+{
 
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
+    /**
+     * Indicates if loading of the provider is deferred.
+     *
+     * @var bool
+     */
+    protected $defer = false;
 
-	/**
-	 * Bootstrap the application events.
-	 *
-	 * @return void
-	 */
-	public function boot() {
-		$this->package('j42/laravel-twilio');
-		include __DIR__.'/../../routes.php';
-	}
+    /**
+     * Bootstrap the application events.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        //$this->package('j42/laravel-twilio');
 
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
-	public function register() {
+        if (!$this->app->routesAreCached()) {
+            require __DIR__ . '/../../routes.php';
+        }
 
-		// Configure Local Config Namespace
-		//Config::addNamespace('twilio', );
+        $this->publishes([
+            __DIR__ . '/../../config/config.php' => config_path('twilio.php'),
+        ]);
+    }
 
-		// Register Singleton
-		App::singleton('twilio', function($app) {
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
 
-			// Create Configuration
-			$config = [
-				'key'	=> Config::get('laravel-twilio::key'),
-				'token'	=> Config::get('laravel-twilio::token'),
-				'from'	=> Config::get('laravel-twilio::from')
-			];
+        $this->mergeConfigFrom(
+            __DIR__ . '/../../config/config.php', 'twilio'
+        );
 
-			// Get Twilio Config
-			return new TwilioClient($config);
+        // Configure Local Config Namespace
+        //Config::addNamespace('twilio', );
 
-		});
-	}
+        // Register Singleton
+        $this->app->singleton('twilio', function ($app) {
 
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return array
-	 */
-	public function provides() {
-		return array('twilio');
-	}
+            // Create Configuration
+            $config = [
+                'key' => Config::get('twilio.key'),
+                'token' => Config::get('twilio.token'),
+                'from' => Config::get('twilio.from')
+            ];
+
+            // Get Twilio Config
+            return new TwilioClient($config);
+
+        });
+
+        /*$this->app->bind('twilio', function()
+        {
+            return new \J42\LaravelTwilio\LaravelTwilioFacade;
+        });*/
+    }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return array('twilio');
+    }
 
 }
