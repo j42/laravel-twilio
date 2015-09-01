@@ -1,7 +1,7 @@
 laravel-twilio
 ================
 
-A Twilio port for Laravel (4.2+)
+A Twilio port for Laravel (5.1+)
 
 
 ## Install
