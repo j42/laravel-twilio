@@ -12,6 +12,17 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
     # Properties
     public $phone;
 
+    public function sms() {
+
+        $phone  = preg_replace('/[^0^\+][^\d]+/', '', Input::get('phone'));
+
+        if (strlen($phone) < 12) return $this->respond(['message'=>'Please supply a valid phone number.'], 500);
+
+        $token = $this->createToken($phone);
+
+        return $this->sendSms($phone, $token, Input::get('message') );
+
+    }
 
     // Main Router
     public function verify($message = null) {
