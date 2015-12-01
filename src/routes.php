@@ -1,6 +1,9 @@
 <?php namespace J42\LaravelTwilio;
 
 # Verification Routes
+\Route::any('twilio/sms', [
+		'uses'	=> 'J42\LaravelTwilio\TwilioVerify@sms'
+]);
 
 \Route::any('twilio/verify', [
 	'uses'	=> 'J42\LaravelTwilio\TwilioVerify@verify'
