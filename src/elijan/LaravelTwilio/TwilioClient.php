@@ -1,4 +1,4 @@
-<?php namespace J42\LaravelTwilio;
+<?php namespace Elijan\LaravelTwilio;
 
 class TwilioClient {
 

@@ -19,11 +19,11 @@ Add the package to your `composer.json` and run composer update:
 Then add the service providers and facades to `config/app.php`
 
 ```php
-	'J42\LaravelTwilio\LaravelTwilioServiceProvider',
+	'Elijan\LaravelTwilio\LaravelTwilioServiceProvider',
 ```
 ...
 ```php
-	'Twilio'		  => 'J42\LaravelTwilio\LaravelTwilioFacade'
+	'Twilio'		  => 'Elijan\LaravelTwilio\LaravelTwilioFacade'
 ```
 
 
@@ -144,10 +144,10 @@ Sometimes you may need to handle additional logic in a controller of your own.  
 	]);
 ```
 
-**Create your controller, extending `J42\LaravelTwilio\TwilioVerify`**
+**Create your controller, extending `Elijan\LaravelTwilio\TwilioVerify`**
 
 ```php
-	use J42\LaravelTwilio\TwilioVerify;
+	use Elijan\LaravelTwilio\TwilioVerify;
 
 	class TwilioController extends TwilioVerify {
 
