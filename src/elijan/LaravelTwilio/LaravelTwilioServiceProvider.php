@@ -20,7 +20,7 @@ class LaravelTwilioServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function boot() {
-		$this->package('j42/laravel-twilio');
+		$this->package('elijan/laravel-twilio');
 		include __DIR__.'/../../routes.php';
 	}
 
