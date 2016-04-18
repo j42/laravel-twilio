@@ -14,7 +14,11 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 
     public function sms() {
 
-        $phone  = preg_replace('/[^0^\+][^\d]+/', '', Input::get('phone'));
+        $phone = preg_replace('/ /', Input::get('phone'));
+
+        $phone  = preg_replace('/[^0^\+][^\d]+/','',$phone);
+
+        \Log::info ("Sending SMS to".$phone);
 
         if (strlen($phone) < 12) return $this->respond(['message'=>'Please supply a valid phone number.'], 500);
 
@@ -124,7 +128,8 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
             // Respond w/ 2 Minute TTL
             return $this->respond([
                 'phone'		=> $phone,
-                'status'	=> (isset($responses[$phone])) ? $responses[$phone]->status : null
+                'status'	=> (isset($responses[$phone])) ? $responses[$phone]->status : null,
+                'message'   =>$responses['message']
             ], 200);
         }
 

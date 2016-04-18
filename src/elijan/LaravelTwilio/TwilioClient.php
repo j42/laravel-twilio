@@ -50,6 +50,9 @@ class TwilioClient {
         // Message Loop
         foreach ($this->to as $number) {
             // Send Via Client
+
+            \Log::info ("Sending Via Twilio Client to: ".$number. "  message: ".$options['message']);
+
             try {
                 $this->response[$number] = $this->twilio->account->messages->sendMessage($this->from, $number, $options['message']);
             } catch (\Exception $e) {
