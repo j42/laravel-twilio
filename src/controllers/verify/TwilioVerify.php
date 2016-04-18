@@ -129,7 +129,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
             return $this->respond([
                 'phone'		=> $phone,
                 'status'	=> (isset($responses[$phone])) ? $responses[$phone]->status : null,
-                'message'   =>$responses['message']
+                'message'   => (isset($responses['message']))?$responses['message']:'success'
             ], 200);
         }
 
