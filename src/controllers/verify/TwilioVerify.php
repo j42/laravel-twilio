@@ -14,7 +14,7 @@ class TwilioVerify extends \BaseController implements TwilioVerifyInterface {
 
     public function sms() {
 
-        $phone = preg_replace('/ /', Input::get('phone'));
+        $phone = preg_replace('/ /', '', Input::get('phone'));
 
         $phone  = preg_replace('/[^0^\+][^\d]+/','',$phone);
 
