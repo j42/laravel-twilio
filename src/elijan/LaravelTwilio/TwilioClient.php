@@ -30,8 +30,14 @@ class TwilioClient {
     public function sms(Array $options, callable $callback = null) {
 
         // Configure Message
-        if (isset($options['to'])) $this->setTo($options['to']);
-        if (isset($options['from'])) $this->setFrom($options['from']);
+        //no we don't want this
+         /*  if (isset($options['to'])) $this->setTo($options['to']);
+        if (isset($options['from'])) $this->setFrom($options['from']);*/
+
+        //single repcipient only, so we can tun it as a service
+        if (isset($options['to'])) {
+            $this->to = [$options['to']];
+        }
 
         // Configure Response Handler
         $this->response = [];
